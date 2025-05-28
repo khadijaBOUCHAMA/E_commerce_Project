@@ -137,10 +137,11 @@ const SummaryApi = {
         url : '/api/address/update',
         method : 'put'
     },
-    disableAddress : {
-        url : '/api/address/disable',
-        method : 'delete'
-    },
+    disableAddress: (id) => ({
+    url: `/api/address/disable/${id}`,
+    method: 'delete'
+})
+,
     CashOnDeliveryOrder : {
         url : "/api/order/cash-on-delivery",
         method : 'post'

@@ -1,1 +1,1 @@
-# Binkeyit Full Stack MERN App
+# AJI TCHRI Full Stack MERN App

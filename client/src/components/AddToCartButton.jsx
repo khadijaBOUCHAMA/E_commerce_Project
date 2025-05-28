@@ -14,37 +14,44 @@ const AddToCartButton = ({ data }) => {
     const cartItem = useSelector(state => state.cartItem.cart)
     const [isAvailableCart, setIsAvailableCart] = useState(false)
     const [qty, setQty] = useState(0)
-    const [cartItemDetails,setCartItemsDetails] = useState()
+    const [cartItemDetails, setCartItemsDetails] = useState()
 
     const handleADDTocart = async (e) => {
-        e.preventDefault()
-        e.stopPropagation()
+        e.preventDefault();
+        e.stopPropagation();
 
         try {
-            setLoading(true)
+            setLoading(true);
+
+            const postData = {
+                productId: data?._id,
+                qty: 1
+            };
+
+            console.log("Posting to /api/cart/create with data:", postData);
 
             const response = await Axios({
                 ...SummaryApi.addTocart,
-                data: {
-                    productId: data?._id
-                }
-            })
+                data: postData
+            });
 
-            const { data: responseData } = response
+            const { data: responseData } = response;
 
             if (responseData.success) {
-                toast.success(responseData.message)
+                toast.success(responseData.message);
                 if (fetchCartItem) {
-                    fetchCartItem()
+                    fetchCartItem();
                 }
             }
         } catch (error) {
-            AxiosToastError(error)
+            AxiosToastError(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-
     }
+    useEffect(() => {
+        console.log('Cart items:', cartItem);
+    }, [cartItem]);
 
     //checking this item in cart or not
     useEffect(() => {
@@ -57,43 +64,50 @@ const AddToCartButton = ({ data }) => {
     }, [data, cartItem])
 
 
-    const increaseQty = async(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-    
-       const response = await  updateCartItem(cartItemDetails?._id,qty+1)
-        
-       if(response.success){
-        toast.success("Item added")
-       }
+    const increaseQty = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log("increaseQty called with id:", cartItemDetails?.id, "qty:", qty + 1);
+
+        const response = await updateCartItem(cartItemDetails?.id, qty + 1);
+
+        if (response.success) {
+            toast.success("Item added");
+        }
     }
 
-    const decreaseQty = async(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if(qty === 1){
-            deleteCartItem(cartItemDetails?._id)
-        }else{
-            const response = await updateCartItem(cartItemDetails?._id,qty-1)
 
-            if(response.success){
-                toast.success("Item remove")
+    const decreaseQty = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log("decreaseQty called with id:", cartItemDetails?.id, "qty:", qty - 1);
+
+        if (qty === 1) {
+            deleteCartItem(cartItemDetails?.id);
+        } else {
+            const response = await updateCartItem(cartItemDetails?.id, qty - 1);
+
+            if (response.success) {
+                toast.success("Item removed");
             }
         }
     }
+
     return (
         <div className='w-full max-w-[150px]'>
             {
                 isAvailableCart ? (
                     <div className='flex w-full h-full'>
-                        <button onClick={decreaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaMinus /></button>
+                        <button onClick={decreaseQty} className='flex items-center justify-center flex-1 w-full p-1 text-white bg-green-600 rounded hover:bg-green-700'><FaMinus /></button>
 
-                        <p className='flex-1 w-full font-semibold px-1 flex items-center justify-center'>{qty}</p>
+                        <p className='flex items-center justify-center flex-1 w-full px-1 font-semibold'>{qty}</p>
 
-                        <button onClick={increaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaPlus /></button>
+                        <button onClick={increaseQty} className='flex items-center justify-center flex-1 w-full p-1 text-white bg-green-600 rounded hover:bg-green-700'><FaPlus /></button>
                     </div>
                 ) : (
-                    <button onClick={handleADDTocart} className='bg-green-600 hover:bg-green-700 text-white px-2 lg:px-4 py-1 rounded'>
+                    <button onClick={handleADDTocart} className='px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700 lg:px-4'>
                         {loading ? <Loading /> : "Add"}
                     </button>
                 )

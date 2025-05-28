@@ -1,26 +1,26 @@
-import UserModel from "../models/user.model.js"
+import UserModel from "../models/mysql/user.model.js"
 
-export const admin = async(request,response,next)=>{
+export const admin = async (request, response, next) => {
     try {
-       const  userId = request.userId
+        const userId = request.userId;
 
-       const user = await UserModel.findById(userId)
+        const user = await UserModel.findByPk(userId); // ✅ Sequelize method
 
-       if(user.role !== 'ADMIN'){
-            return response.status(400).json({
-                message : "Permission denial",
-                error : true,
-                success : false
-            })
-       }
+        if (!user || user.role !== 'ADMIN') {
+            return response.status(403).json({
+                message: "Permission denied",
+                error: true,
+                success: false
+            });
+        }
 
-       next()
+        next();
 
     } catch (error) {
         return response.status(500).json({
-            message : "Permission denial",
-            error : true,
-            success : false
-        })
+            message: error.message || "Permission denied",
+            error: true,
+            success: false
+        });
     }
 }

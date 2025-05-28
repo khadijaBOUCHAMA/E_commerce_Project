@@ -32,10 +32,10 @@ const Register = () => {
     const valideValue = Object.values(data).every(el => el)
 
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(data.password !== data.confirmPassword){
+        if (data.password !== data.confirmPassword) {
             toast.error(
                 "password and confirm password must be same"
             )
@@ -45,20 +45,20 @@ const Register = () => {
         try {
             const response = await Axios({
                 ...SummaryApi.register,
-                data : data
+                data: data
             })
-            
-            if(response.data.error){
+
+            if (response.data.error) {
                 toast.error(response.data.message)
             }
 
-            if(response.data.success){
+            if (response.data.success) {
                 toast.success(response.data.message)
                 setData({
-                    name : "",
-                    email : "",
-                    password : "",
-                    confirmPassword : ""
+                    name: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
                 })
                 navigate("/login")
             }
@@ -71,9 +71,9 @@ const Register = () => {
 
     }
     return (
-        <section className='w-full container mx-auto px-2'>
-            <div className='bg-white my-4 w-full max-w-lg mx-auto rounded p-7'>
-                <p>Welcome to Binkeyit</p>
+        <section className='container w-full px-2 mx-auto'>
+            <div className='w-full max-w-lg mx-auto my-4 bg-white rounded p-7'>
+                <p>Welcome to AJI TCHRI</p>
 
                 <form className='grid gap-4 mt-6' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
@@ -82,7 +82,7 @@ const Register = () => {
                             type='text'
                             id='name'
                             autoFocus
-                            className='bg-blue-50 p-2 border rounded outline-none focus:border-primary-200'
+                            className='p-2 border rounded outline-none bg-blue-50 focus:border-primary-200'
                             name='name'
                             value={data.name}
                             onChange={handleChange}
@@ -94,7 +94,7 @@ const Register = () => {
                         <input
                             type='email'
                             id='email'
-                            className='bg-blue-50 p-2 border rounded outline-none focus:border-primary-200'
+                            className='p-2 border rounded outline-none bg-blue-50 focus:border-primary-200'
                             name='email'
                             value={data.email}
                             onChange={handleChange}
@@ -103,7 +103,7 @@ const Register = () => {
                     </div>
                     <div className='grid gap-1'>
                         <label htmlFor='password'>Password :</label>
-                        <div className='bg-blue-50 p-2 border rounded flex items-center focus-within:border-primary-200'>
+                        <div className='flex items-center p-2 border rounded bg-blue-50 focus-within:border-primary-200'>
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id='password'
@@ -126,7 +126,7 @@ const Register = () => {
                     </div>
                     <div className='grid gap-1'>
                         <label htmlFor='confirmPassword'>Confirm Password :</label>
-                        <div className='bg-blue-50 p-2 border rounded flex items-center focus-within:border-primary-200'>
+                        <div className='flex items-center p-2 border rounded bg-blue-50 focus-within:border-primary-200'>
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
                                 id='confirmPassword'
@@ -148,7 +148,7 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
+                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"}    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
 
                 </form>
 

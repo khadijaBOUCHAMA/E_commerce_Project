@@ -1,4 +1,4 @@
-import ProductModel from "../models/product.model.js";
+import ProductModel from "../models/mongo/product.model.js";
 
 export const createProductController = async(request,response)=>{
     try {
@@ -265,47 +265,53 @@ export const deleteProductDetails = async(request,response)=>{
 }
 
 //search product
-export const searchProduct = async(request,response)=>{
-    try {
-        let { search, page , limit } = request.body 
+export const searchProduct = async (request, response) => {
+  try {
+    let { search, page, limit } = request.body;
 
-        if(!page){
-            page = 1
-        }
-        if(!limit){
-            limit  = 10
-        }
-
-        const query = search ? {
-            $text : {
-                $search : search
-            }
-        } : {}
-
-        const skip = ( page - 1) * limit
-
-        const [data,dataCount] = await Promise.all([
-            ProductModel.find(query).sort({ createdAt  : -1 }).skip(skip).limit(limit).populate('category subCategory'),
-            ProductModel.countDocuments(query)
-        ])
-
-        return response.json({
-            message : "Product data",
-            error : false,
-            success : true,
-            data : data,
-            totalCount :dataCount,
-            totalPage : Math.ceil(dataCount/limit),
-            page : page,
-            limit : limit 
-        })
-
-
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!page) {
+      page = 1;
     }
-}
+    if (!limit) {
+      limit = 10;
+    }
+
+    // Construire la query avec $regex pour recherche partielle sur name et description
+    const query = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { description: { $regex: search, $options: "i" } }
+          ]
+        }
+      : {};
+
+    const skip = (page - 1) * limit;
+
+    const [data, dataCount] = await Promise.all([
+      ProductModel.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('category subCategory'),
+      ProductModel.countDocuments(query)
+    ]);
+
+    return response.json({
+      message: "Product data",
+      error: false,
+      success: true,
+      data: data,
+      totalCount: dataCount,
+      totalPage: Math.ceil(dataCount / limit),
+      page: page,
+      limit: limit
+    });
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false
+    });
+  }
+};
